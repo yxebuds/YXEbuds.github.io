@@ -1,0 +1,65 @@
+import requests
+import json
+from telegram.ext import Updater, CommandHandler
+
+# Telegram Bot API token
+TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
+
+# Burger King menu options
+menu_options = [
+    {
+        'name': 'Whopper',
+        'description': 'A signature flame-grilled beef burger with lettuce, tomatoes, onions, pickles, and mayo.',
+        'price': 5.99
+    },
+    {
+        'name': 'Chicken Royale',
+        'description': 'A crispy chicken patty with lettuce, tomatoes, and mayo, served on a sesame seed bun.',
+        'price': 4.99
+    },
+    {
+        'name': 'Veggie Burger',
+        'description': 'A plant-based patty with lettuce, tomatoes, onions, pickles, and ketchup, served on a sesame seed bun.',
+        'price': 3.99
+    }
+]
+
+def start(update, context):
+    """Handler for the /start command."""
+    message = "Welcome to Burger King! How can I assist you?\n\n"
+    message += "Use the /menu command to see the available menu options."
+    update.message.reply_text(message)
+
+def menu(update, context):
+    """Handler for the /menu command."""
+    message = "Here are the menu options:\n\n"
+
+    for option in menu_options:
+        message += f"🍔 {option['name']} - ${option['price']}\n"
+        message += f"   {option['description']}\n\n"
+
+    update.message.reply_text(message)
+
+def unknown(update, context):
+    """Handler for unknown commands."""
+    update.message.reply_text("Sorry, I don't understand that command.")
+
+def main():
+    # Create the Telegram Updater and dispatcher
+    updater = Updater(TOKEN, use_context=True)
+    dispatcher = updater.dispatcher
+
+    # Add command handlers
+    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CommandHandler("menu", menu))
+    dispatcher.add_handler(CommandHandler("unknown", unknown))
+
+    # Start the bot
+    updater.start_polling()
+    print("Bot started!")
+
+    # Run the bot until you press Ctrl-C
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
